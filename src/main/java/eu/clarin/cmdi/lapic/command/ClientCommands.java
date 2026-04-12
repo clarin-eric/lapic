@@ -1,9 +1,11 @@
 package eu.clarin.cmdi.lapic.command;
 
 import eu.clarin.cmdi.lapic.conf.LapicConf;
-import org.apache.commons.io.IOUtils;
-import org.springframework.shell.command.annotation.Command;
-import org.springframework.shell.command.annotation.Option;
+import org.springframework.shell.core.command.annotation.Argument;
+import org.springframework.shell.core.command.annotation.Command;
+import org.springframework.shell.core.command.annotation.Option;
+import org.springframework.stereotype.Component;
+
 
 import java.io.IOException;
 import java.net.Authenticator;
@@ -17,7 +19,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-@Command
+@Component
 public class ClientCommands {
 
     private final LapicConf lapicConf;
@@ -44,8 +46,8 @@ public class ClientCommands {
                 .build();
     }
 
-    @Command(command = "status", description = "get latest status results for a URL")
-    public String getStatus(@Option(required = true, longNames = "url", shortNames = 'u') String urlString) throws URISyntaxException, IOException, InterruptedException {
+    @Command(name = "status", description = "get latest status results for a URL")
+    public String getStatus(@Argument(index = 0, description = "the URL for which you want the latest status result") String urlString) throws URISyntaxException, IOException, InterruptedException {
 
         return this.httpClient.send(
                 getHttpRequest("/status", "[{\"url\":\"" + urlString + "\"}]"),
@@ -53,8 +55,8 @@ public class ClientCommands {
             ).body();
     }
 
-    @Command(command = "history", description = "get historic status results for URL")
-    public String getHistory(@Option(required = true, longNames = "url", shortNames = 'u') String urlString) throws URISyntaxException, IOException, InterruptedException {
+    @Command(name = "history", description = "get historic status results for URL")
+    public String getHistory(@Argument(index = 0, description = "the URL for which you want historic status results") String urlString) throws URISyntaxException, IOException, InterruptedException {
 
         return this.httpClient.send(
                 getHttpRequest("/history", "[{\"url\":\"" + urlString + "\"}]"),
@@ -62,8 +64,8 @@ public class ClientCommands {
         ).body();
     }
 
-    @Command(command = "check", description = "upload a JSON file with URLs to check")
-    public String doCheck(@Option(required = true, longNames = "file", shortNames = 'f') String file) throws URISyntaxException, IOException, InterruptedException {
+    @Command(name = "check", description = "upload a JSON file with URLs to check")
+    public String doCheck(@Argument(index = 0, description = "path to JSON file") String file) throws URISyntaxException, IOException, InterruptedException {
 
         Path path = Paths.get(file);
 
@@ -82,8 +84,8 @@ public class ClientCommands {
         return this.httpClient.send(request, HttpResponse.BodyHandlers.ofString()).body();
     }
 
-    @Command(command = "result", description = "get either all checking results or for a specific batch ID")
-    public void getResult(@Option(longNames = "id", shortNames = 'i') String batchId) throws URISyntaxException, IOException, InterruptedException {
+    @Command(name = "result", description = "get either all checking results or for a specific batch ID")
+    public void getResult(@Option(longName = "id", shortName = 'i') String batchId) throws URISyntaxException, IOException, InterruptedException {
 
         HttpRequest request = HttpRequest
                 .newBuilder()
@@ -91,7 +93,7 @@ public class ClientCommands {
                 .header("Content-Type", "application/json")
                 .build();
 
-        IOUtils.copy(this.httpClient.send(request, HttpResponse.BodyHandlers.ofInputStream()).body(), System.out);
+        this.httpClient.send(request, HttpResponse.BodyHandlers.ofInputStream()).body().transferTo(System.out);
     }
 
     private HttpRequest getHttpRequest(String path, String body) throws URISyntaxException {
