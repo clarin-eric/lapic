@@ -1,0 +1,11 @@
+spring:
+  shell:
+    interactive:
+      enabled: false
+  application:
+    name: lapic
+lapic:
+  user:
+    name: ${USER_NAME}
+    password: ${USER_PASSWORD}
+  base-url: "https://alpha-linkchecker.clarin.eu/api"
