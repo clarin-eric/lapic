@@ -46,8 +46,8 @@ public class ClientCommands {
                 .build();
     }
 
-    @Command(name = "status", description = "get latest status results for a URL")
-    public String getStatus(@Argument(index = 0, description = "the URL for which you want the latest status result") String urlString) throws URISyntaxException, IOException, InterruptedException {
+    @Command(name = "status", description = "get latest status results for a URL", help = "Usage: status [-u | --url] <url>")
+    public String getStatus(@Option(required = true, longName = "url", shortName = 'u', description = "the URL for which you want the latest status result") String urlString) throws URISyntaxException, IOException, InterruptedException {
 
         return this.httpClient.send(
                 getHttpRequest("/status", "[{\"url\":\"" + urlString + "\"}]"),
@@ -55,8 +55,8 @@ public class ClientCommands {
             ).body();
     }
 
-    @Command(name = "history", description = "get historic status results for URL")
-    public String getHistory(@Argument(index = 0, description = "the URL for which you want historic status results") String urlString) throws URISyntaxException, IOException, InterruptedException {
+    @Command(name = "history", description = "get historic status results for URL", help = "Usage: history  [-u | --url=]<url>")
+    public String getHistory(@Option(required = true, longName = "url", shortName = 'u', description = "the URL for which you want historic status results") String urlString) throws URISyntaxException, IOException, InterruptedException {
 
         return this.httpClient.send(
                 getHttpRequest("/history", "[{\"url\":\"" + urlString + "\"}]"),
@@ -64,8 +64,8 @@ public class ClientCommands {
         ).body();
     }
 
-    @Command(name = "check", description = "upload a JSON file with URLs to check")
-    public String doCheck(@Argument(index = 0, description = "path to JSON file") String file) throws URISyntaxException, IOException, InterruptedException {
+    @Command(name = "check", description = "upload a JSON file with URLs to check", help = "Usage: check [-f | --file=]<path to file>")
+    public String doCheck(@Option(required = true, longName = "file", shortName = 'f', description = "path to JSON file") String file) throws URISyntaxException, IOException, InterruptedException {
 
         Path path = Paths.get(file);
 
@@ -84,8 +84,8 @@ public class ClientCommands {
         return this.httpClient.send(request, HttpResponse.BodyHandlers.ofString()).body();
     }
 
-    @Command(name = "result", description = "get either all checking results or for a specific batch ID")
-    public void getResult(@Option(longName = "id", shortName = 'i') String batchId) throws URISyntaxException, IOException, InterruptedException {
+    @Command(name = "result", description = "get either all checking results or for a specific batch ID", help = "Usage: result [-i | --id=]<batch-ID>")
+    public void getResult(@Option(required = false, longName = "id", shortName = 'i', description = "the batch ID") String batchId) throws URISyntaxException, IOException, InterruptedException {
 
         HttpRequest request = HttpRequest
                 .newBuilder()
