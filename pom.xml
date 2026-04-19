@@ -10,7 +10,7 @@
     </parent>
     <groupId>eu.clarin.cmdi</groupId>
     <artifactId>lapic</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.1</version>
     <name>lapic</name>
     <description>Linkchecker API Client</description>
     <url/>
